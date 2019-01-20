@@ -3,7 +3,6 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Perfil del usuario</h4>
-                <h6 class="card-subtitle">nombre de usuario</h6>
                 <form class="form p-t-20" ngNativeValidate #f="ngForm" (ngSubmit)="guardar( f.value )">
                     <div class="form-group">
                         <label for="exampleInputuname">Nombre de Usuario</label>
@@ -33,7 +32,6 @@
         <div class="card">
             <div class="card-body" align="center">
                 <h4 class="card-title">Foto del usuario</h4>
-                <h6 class="card-subtitle">nombre de usuario</h6>
 
                 <img *ngIf="!imagenTemp" [src]="usuario.img | imagen" class="w150">
                 <img *ngIf="imagenTemp" [src]="imagenTemp" class="w150">
