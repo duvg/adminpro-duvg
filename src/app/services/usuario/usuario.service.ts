@@ -22,12 +22,16 @@ export class UsuarioService {
     this.cargarStorage();
   }
 
-  // Verifica si un usuario esta autenticado
+  // =====================================
+  // Verficar la autenticacón del usuario
+  // =====================================
   estaLogueado () {
     return (this.token.length > 5 ) ? true : false;
   }
   
-  // Carga los datos del localStorage
+  // =====================================
+  // Cargar datos del localStorage
+  // =====================================
   cargarStorage () {
     if ( localStorage.getItem('token') ) {
       this.token = localStorage.getItem('token');
@@ -38,6 +42,10 @@ export class UsuarioService {
     }
   }
 
+
+  // =====================================
+  // Guardar datos en el localStorage
+  // =====================================
   guardarStorage (id: string, token: string, usuario: Usuario) {
     localStorage.setItem('id', id);
     localStorage.setItem('token', token);
@@ -47,7 +55,9 @@ export class UsuarioService {
     this.token = token;
   }
 
-  // Login google
+  // =====================================
+  // Login con google
+  // =====================================
   loginGoogle (token: string) {
     let url = URL_SERVICIOS + '/login/google';
     
@@ -60,7 +70,9 @@ export class UsuarioService {
     );
   }
 
-  // Cerrar sesion
+  // =====================================
+  // Cerrar la sesion del usuario
+  // =====================================
   logout () {
     this.usuario = null;
     this.token = '';
@@ -71,7 +83,10 @@ export class UsuarioService {
     this.router.navigate(['/login']);
 
   }
-  // Inicio de sesion
+
+  // =====================================
+  // Iniciar sesion
+  // =====================================
   login (usuario: Usuario, recuerdame: boolean = false) {
     
     // Recordar el usuario
@@ -93,7 +108,10 @@ export class UsuarioService {
     );
   }
 
+
+  // =====================================
   // Crear un nuevo usuario
+  // =====================================
   crearUsario (usuario: Usuario) {
     let url = `${URL_SERVICIOS}/usuario`;
     return this.http.post( url, usuario ).pipe(
@@ -104,7 +122,9 @@ export class UsuarioService {
     );
   }
 
-  // Actualizar usuario
+  // =====================================
+  // Actualizar un usuario
+  // =====================================
   actualizarUsuario (usuario: Usuario) {
     let url = URL_SERVICIOS + '/usuario/' + usuario._id;
     url += '?token=' + this.token;
@@ -124,7 +144,24 @@ export class UsuarioService {
     );
   }
 
-  // Cambio de imagen del usuario
+  // =====================================
+  // Borrar un usuario
+  // =====================================
+  borrarUsuario ( id: string ) {
+    let url = URL_SERVICIOS + '/usuario/' + id;
+    url += '?token=' + this.token;
+
+    return this.http.delete(url).pipe(
+      map( resp => {
+        swal('Usuario borrado', 'El usuario ha sido eliminado del sistema', 'success');
+        return true;
+      })
+    );
+  }
+
+  // =====================================
+  // Cambiar imagen del usuario
+  // =====================================
   cambiarImagen ( archivo: File , id: string) {
     this._subirArchivoService.subirArchivo( archivo , 'usuarios', id)
       .then( (resp: any) => {
@@ -138,7 +175,9 @@ export class UsuarioService {
       });
   }
 
-  // Carga todos los usuarios de la base de datos
+  // =====================================
+  // Cargar todos los usuarios
+  // =====================================
   cargarUsuarios ( desde: number = 0 ) {
     let url = URL_SERVICIOS + '/usuario?desde=' + desde;
 
@@ -146,27 +185,18 @@ export class UsuarioService {
 
   }
 
-  // Búscar usuarios
+  // =====================================
+  // Búscar usuairo por el nombre
+  // =====================================
   buscarUsuarios ( termino ) {
     let url = URL_SERVICIOS + '/busqueda/coleccion/usuarios/' + termino;
 
     return this.http.get(url).pipe(
-      map( ( resp ) => resp.usuarios)
+      map( ( resp: any ) => resp.usuarios)
     );
   }
 
-  // Borrar un usuario
-  borrarUsuario ( id: string ) {
-    let url = URL_SERVICIOS + '/usuario/' + id;
-    url += '?token=' + this.token;
-
-    return this.http.delete(url).pipe(
-      map( resp => {
-        swal('Usuario borrado', 'El usuario ha sido eliminado del sistema', 'success');
-        return true;
-      })
-    );
-  }
+  
 }
 
 

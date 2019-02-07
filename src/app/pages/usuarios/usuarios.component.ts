@@ -4,6 +4,8 @@ import { UsuarioService } from 'src/app/services/service.index';
 import { registerContentQuery } from '@angular/core/src/render3';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
 
+declare var swal: any;
+
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
@@ -27,6 +29,9 @@ export class UsuariosComponent implements OnInit {
               .subscribe( resp => this.cargarUsuarios());
   }
 
+  // =====================================
+  // Cargar usuarios del sistema
+  // =====================================
   cargarUsuarios () {
     this.cargando = true;
     this._usuarioService.cargarUsuarios( this.desde )
@@ -37,6 +42,9 @@ export class UsuariosComponent implements OnInit {
               });
   }
 
+  // =====================================
+  // Paginación de resultados
+  // =====================================
   cambiarDesde ( valor: number) {
     let desde = this.desde + valor;
     console.log(desde);
@@ -53,7 +61,9 @@ export class UsuariosComponent implements OnInit {
     this.cargarUsuarios(); 
   }
   
+  // =====================================
   // Búscar usuario
+  // =====================================
   buscarUsuario ( termino: string ) {
     if ( termino.length === 0) {
       this.cargarUsuarios();
@@ -70,7 +80,9 @@ export class UsuariosComponent implements OnInit {
     );
   }
 
-  // Actualiza el rol del usuario
+  // =====================================
+  // Actualizar el rol del usuario
+  // =====================================
   actualizarUsuario (usuario: Usuario) {
     this._usuarioService.actualizarUsuario( usuario )
               .subscribe();
@@ -78,7 +90,6 @@ export class UsuariosComponent implements OnInit {
 
   // Borrar usuario 
   borrarUsuario (usuario: Usuario) {
-    console.log(usuario);
     if ( usuario._id === this._usuarioService.usuario._id ) {
       swal('Error al borrar!', 'No se puede borrar a si mismo', 'error');
       return;
@@ -108,7 +119,7 @@ export class UsuariosComponent implements OnInit {
   // Mostrar el modal subir imagen
   // =====================================
   mostrarModal ( id: string) {
-    console.log("el id", id);
+    console.log('el id', id);
     this._uploadModalService.mostrarModal('usuarios', id);
   }
 }
