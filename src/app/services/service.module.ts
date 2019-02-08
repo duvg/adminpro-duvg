@@ -10,6 +10,7 @@ import {
   UsuarioService,
   HospitalService,
   LoginGuardGuard,
+  AdminGuard,
   SubirArchivoService,
   MedicoService
   
@@ -28,9 +29,10 @@ import {
     UsuarioService,
     HospitalService,
     LoginGuardGuard, 
+    AdminGuard,
     SubirArchivoService,
     ModalUploadService,
-    MedicoService
+    MedicoService,
   ]
 })
 export class ServiceModule { }

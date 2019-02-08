@@ -35,9 +35,8 @@ export class HospitalesComponent implements OnInit {
     console.log(this.desde);
     this._hospitalService.cargarHospitales( this.desde )
               .subscribe( ( resp: any ) => {
-                this.totalRegistros = resp.total;
-                this.hospitales = resp.hospitales;
-                
+                this.hospitales = resp;
+                this.totalRegistros = this._hospitalService.totalRegistros;
                 this.cargando = false;
               });
   }

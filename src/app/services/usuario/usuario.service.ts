@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Usuario } from '../../models/Usuario.model';
 import { HttpClient } from '@angular/common/http';
 import { URL_SERVICIOS } from '../../config/config';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import { Observable, empty} from 'rxjs';
 import { Router } from '@angular/router';
 import { SubirArchivoService } from '../subir-archivo/subir-archivo.service';
 
@@ -13,6 +14,7 @@ export class UsuarioService {
   // Propiedades para verificar si el usuario esta logueado
   usuario: Usuario;
   token: string;
+  menu: any = [];
 
   constructor(
     public http: HttpClient,
@@ -36,9 +38,11 @@ export class UsuarioService {
     if ( localStorage.getItem('token') ) {
       this.token = localStorage.getItem('token');
       this.usuario = JSON.parse( localStorage.getItem('usuario') );
+      this.menu = JSON.parse( localStorage.getItem('menu'));
     } else {
       this.token = '';
       this.usuario = null;
+      this.menu = [];
     }
   }
 
@@ -46,13 +50,15 @@ export class UsuarioService {
   // =====================================
   // Guardar datos en el localStorage
   // =====================================
-  guardarStorage (id: string, token: string, usuario: Usuario) {
+  guardarStorage (id: string, token: string, usuario: Usuario, menu: any) {
     localStorage.setItem('id', id);
     localStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
+    localStorage.setItem('menu', JSON.stringify(menu));
 
     this.usuario = usuario;
     this.token = token;
+    this.menu = menu;
   }
 
   // =====================================
@@ -63,8 +69,8 @@ export class UsuarioService {
     
     return this.http.post(url, {token: token}).pipe(
       map( ( resp: any ) => {
-        console.log(resp.usuario);
-        this.guardarStorage(resp.id, resp.token, resp.usuario);
+        console.log(resp);
+        this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu);
         return;
       })
     );
@@ -76,9 +82,11 @@ export class UsuarioService {
   logout () {
     this.usuario = null;
     this.token = '';
+    this.menu = [];
 
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('menu');
 
     this.router.navigate(['/login']);
 
@@ -100,11 +108,18 @@ export class UsuarioService {
 
      return this.http.post(url, usuario).pipe(
        map((resp: any) => {
-         console.log(resp);
-          // TODO: llamar el storage
-          this.guardarStorage(resp.id, resp.token, resp.usuario);
+         
+          // llamar el storage
+          this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu);
           return true;
-         })
+         }),
+       catchError (err => {
+         console.log( err.status );
+         console.log( err.error.mensaje );
+         swal('Error al iniciar sesion', err.error.mensaje, 'error');
+         return empty();
+         
+       })
     );
   }
 
@@ -118,6 +133,10 @@ export class UsuarioService {
       map( (resp: any) => {
         swal('Usuario creado', resp.usuario.email, 'success');
         return resp.usuario;
+      }),
+      catchError( err => {
+        swal(err.error.mensaje, err.error.errors.message, 'error');
+        return empty();
       })
     );
   }
@@ -134,7 +153,7 @@ export class UsuarioService {
 
         if ( usuario._id === this.usuario._id ) {
           let usuarioDB: Usuario = resp.usuario;
-          this.guardarStorage(usuarioDB._id, this.token, usuarioDB );  
+          this.guardarStorage(usuarioDB._id, this.token, usuarioDB, this.menu );  
         }
 
         
@@ -168,7 +187,7 @@ export class UsuarioService {
         console.log(resp);
         this.usuario.img = resp.usuario.img;
         swal('Imagen actualizada', this.usuario.nombre , 'success');
-        this.guardarStorage(id, this.token, this.usuario);
+        this.guardarStorage(id, this.token, this.usuario, this.menu);
       })
       .catch( resp => {
         console.log(resp);
