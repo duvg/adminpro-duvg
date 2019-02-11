@@ -63,9 +63,10 @@ export class LoginComponent implements OnInit {
 
   // Ingresar al sistema y obtener el token de autenticación
   ingresar ( forma: NgForm ) {
-
+    
     // Validamos el formulario
     if ( forma.invalid ) {
+      
       return;
     }
 
